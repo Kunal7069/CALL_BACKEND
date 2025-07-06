@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr
-from typing import Dict
 import uuid
+from typing import Dict
+
+from pydantic import BaseModel, EmailStr
+
 
 class OrgBase(BaseModel):
     name: str
@@ -8,8 +10,10 @@ class OrgBase(BaseModel):
     parameters: str
     email: EmailStr
 
+
 class OrgCreate(OrgBase):
     pass
+
 
 class OrgResponse(OrgBase):
     id: uuid.UUID

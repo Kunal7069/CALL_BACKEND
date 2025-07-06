@@ -1,8 +1,10 @@
 import csv
-from typing import List, Dict
-from fastapi import UploadFile
 import os
+from typing import Dict, List
+
 import pandas as pd
+from fastapi import UploadFile
+
 
 async def parse_csv_files(files: List[UploadFile]) -> Dict[str, list]:
     result = {}
@@ -16,22 +18,18 @@ async def parse_csv_files(files: List[UploadFile]) -> Dict[str, list]:
 
 CSV_PATH = "log.csv"
 
+
 async def save_summary_to_csv(summary: dict):
     try:
-        print("➡️ Received summary to write:", summary)  # Debug print
-
         df = pd.DataFrame([summary])
 
         if not os.path.exists(CSV_PATH):
-            print("📝 Creating new CSV file.")
             df.to_csv(CSV_PATH, index=False)
         else:
-            print("📎 Appending to existing CSV file.")
-            df.to_csv(CSV_PATH, mode='a', header=False, index=False)
-
-        print(f"✅ Call summary saved to {CSV_PATH}")
+            df.to_csv(CSV_PATH, mode="a", header=False, index=False)
 
     except Exception as e:
-        print("❌ Error while writing summary to CSVVVVVVVVVVVVVVVVVVVVVVVVVVVV:",e)
+        print("Error while writing summary to CSV:", e)
         import traceback
+
         traceback.print_exc()

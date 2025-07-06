@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config.database import engine
-from app.models.orgModel import Base
-from app.routes import orgRoutes
-from app.routes import callRoutes
+from fastapi_orgs.app.config.database import engine
+from fastapi_orgs.app.models.orgModel import Base
+from fastapi_orgs.app.routes import callRoutes, orgRoutes
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
