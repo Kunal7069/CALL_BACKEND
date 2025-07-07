@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -22,17 +24,36 @@ def initiate_call(org_id: str = Body(...), phone_number: str = Body(...)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.post(CALL_ROUTES["keys"])
+async def get_keys(call_id: str, db: Session = Depends(get_db)):
+    try:
+        manager = OrganizationManager(db)
+        org_id = call_mgr.call_sessions[call_id]["org_id"]
+        org = manager.get_by_id(org_id)
+        description = org.description
+        keys_list = list(description.keys())
+        return keys_list
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @router.post(CALL_ROUTES["message"])
 async def record_message(
-    call_id: str, question: str = Body(...), db: Session = Depends(get_db)
+    call_id: str,
+    question: str = Body(...),
+    selected_sources: List[str] = Body(...),
+    db: Session = Depends(get_db),
 ):
     try:
         manager = OrganizationManager(db)
         org_id = call_mgr.call_sessions[call_id]["org_id"]
         org = manager.get_by_id(org_id)
         description = org.description
+        filtered_description = {
+            key: value for key, value in description.items() if key in selected_sources
+        }
         answer = await sambanova_service.ask_question(
-            description=description, question=question
+            description=filtered_description, question=question
         )
         call_mgr.add_message(call_id, question, answer)
         return {"answer": answer}

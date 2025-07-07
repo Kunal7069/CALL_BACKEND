@@ -1,3 +1,18 @@
+import ast
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Read raw JSON (Python-style) from env and convert it safely
+raw_creds = os.getenv("GOOGLE_CREDENTIALS_JSON")
+GOOGLE_CREDENTIALS = ast.literal_eval(raw_creds)
+
+
+SPREADSHEET_ID = "1GwMoKuAGReebrve7MWgi-6xHYhQK2NoSnS2BdY2wZWM"
+SHEET_NAME = "Sheet1"
+
 CALL_SUMMARY_PROMPT_TEMPLATE = """
 This is a call log between a customer and the booking assistant.
 Conversation:
@@ -32,6 +47,7 @@ CALL_ROUTES = {
     "initiate": "/calls/initiate",
     "message": "/calls/{call_id}/message",
     "end": "/calls/{call_id}/end",
+    "keys": "/keys/{call_id}",
 }
 
 ORG_ROUTES = {"create": "/organizations/", "get_by_name": "/organizations/{name}"}
